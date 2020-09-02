@@ -28,19 +28,18 @@ const token = "bt5a9vn48v6vdhrudli0"
 export default new Vuex.Store({
   state: {
     user: {},
-    boards: [],
-    activeBoard: {},
-    stocks: []
+    userStockInfo: {
+      stocksFollowing: []
+    },
+    mudStockInfo: {},
+    savedStocks: [],
   },
   mutations: {
     setUser(state, user) {
       state.user = user
     },
-    setBoards(state, boards) {
-      state.boards = boards
-    },
     addStockInfo(state, stock) {
-      state.stocks.push(stock)
+      state.savedStocks.push(stock)
     }
   },
   actions: {
@@ -67,49 +66,36 @@ export default new Vuex.Store({
         console.error(error)
       }
     },
-    async StockQuote({ commit }, stockName) {
-      request('https://finnhub.io/api/v1/quote?symbol=AAPL&token=' + token, { json: true }, (err, res, body) => {
-        if (err) { return console.log(err); }
-        console.log(body)
-        let stock = {
-          name: stockName,
-          currentPrice: body.c,
-          openPrice: body.o,
-          highPrice: body.h,
-          lowPrice: body.l,
-          previousClosePrice: body.pc
-        }
-        commit("addStockInfo", stock)
-        //o = open price of the day
-        //h = high price of the day
-        //l = low price of the day
-        //c = current price
-        //pc = previous close price
-      });
+    async getAllSavedStocks({ commit }) {
+      // @ts-ignore
+      let stockNameArr = this.state.stocksFollowing
+      let i = 0
+      while (i < stockNameArr.length) {
+        request('https://finnhub.io/api/v1/quote?symbol=' + stockNameArr[i] + '&token=' + token, { json: true }, (err, res, body) => {
+          if (err) { return console.log(err); }
+          console.log(body)
+          let stock = {
+            name: stockNameArr[i],
+            currentPrice: body.c,
+            openPrice: body.o,
+            highPrice: body.h,
+            lowPrice: body.l,
+            previousClosePrice: body.pc
+          }
+          commit("addStockInfo", stock)
+          //o = open price of the day
+          //h = high price of the day
+          //l = low price of the day
+          //c = current price
+          //pc = previous close price
+          i++
+        });
+      }
     },
-    //#endregion
+    async getMyStocks({ commit }) {
 
-
-    //#region -- BOARDS --
-    getBoards({ commit, dispatch }) {
-      api.get('boards')
-        .then(res => {
-          commit('setBoards', res.data)
-        })
-    },
-    addBoard({ commit, dispatch }, boardData) {
-      api.post('boards', boardData)
-        .then(serverBoard => {
-          dispatch('getBoards')
-        })
     }
     //#endregion
 
-
-    //#region -- LISTS --
-
-
-
-    //#endregion
   }
 })

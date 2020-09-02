@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../views/Home.vue'
-import Boards from '../views/Boards.vue'
+import StockPractice from '../views/StockPractice.vue'
 import Board from '../views/Board.vue'
 import { authGuard } from "@bcwdev/auth0-vue"
 
@@ -15,9 +15,9 @@ export default new Router({
       component: Home
     },
     {
-      path: '/boards',
-      name: 'boards',
-      component: Boards,
+      path: '/stockPractice',
+      name: 'stockPractice',
+      component: StockPractice,
       beforeEnter: authGuard
     },
     {
