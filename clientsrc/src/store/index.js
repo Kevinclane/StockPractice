@@ -28,18 +28,20 @@ const token = "bt5a9vn48v6vdhrudli0"
 export default new Vuex.Store({
   state: {
     user: {},
-    userStockInfo: {
-      stocksFollowing: []
-    },
+    userStockInfo: {},
     mudStockInfo: {},
-    savedStocks: [],
+    publicStocks: [],
+    stocks: []
   },
   mutations: {
     setUser(state, user) {
       state.user = user
     },
     addStockInfo(state, stock) {
-      state.savedStocks.push(stock)
+      state.stocks.push(stock)
+    },
+    setUserInfo(state, data) {
+      state.userStockInfo = data
     }
   },
   actions: {
@@ -50,10 +52,15 @@ export default new Vuex.Store({
     resetBearer() {
       api.defaults.headers.authorization = "";
     },
+    //#endregion
     async getProfile({ commit }) {
       try {
         let res = await api.get("/profile")
         commit("setUser", res.data)
+        if (res.data) {
+          let userInfo = await api.get("/userinfo/" + res.data.id)
+          commit("setUserInfo", userInfo.data)
+        }
       } catch (err) {
         console.error(err)
       }
@@ -95,7 +102,6 @@ export default new Vuex.Store({
     async getMyStocks({ commit }) {
 
     }
-    //#endregion
 
   }
 })

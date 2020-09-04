@@ -1,5 +1,4 @@
 import { dbContext } from "../db/DbContext";
-import UserInfo from "../models/UserInfo";
 
 // Private Methods
 
@@ -11,7 +10,7 @@ import UserInfo from "../models/UserInfo";
 async function createUserInfoIfNeeded(profile, email) {
   if (!profile) {
     let obj = {}
-    obj.userEmail = email
+    obj.ownerEmail = email
     profile = await dbContext.UserInfo.create({
       ...obj
     });
@@ -22,7 +21,7 @@ async function createUserInfoIfNeeded(profile, email) {
 class UserInfosService {
   async getUserInfo(user) {
     let userInfo = await dbContext.UserInfo.findOne({
-      userEmail: user.email
+      ownerEmail: user.email
     })
     userInfo = await createUserInfoIfNeeded(userInfo, user.email)
     return userInfo

@@ -5,7 +5,7 @@ const UserInfo = new Schema(
   {
     ownerEmail: { type: String, required: true },
     favStocks: [{ type: Object }],
-    token: { type: String, required: true }
+    token: { type: String }
   },
   { timestamps: true, toJSON: { virtuals: true } }
 );
