@@ -13,7 +13,8 @@ export const api = Axios.create({
 
 
 export const stockApi = Axios.create({
-  baseURL: "https://finnhub.io/api/v1/",
-  timeout: 3000,
-  withCredentials: true
+  baseURL: "https://api.tiingo.com/tiingo/",
+  timeout: 300000,
+  // withCredentials: true,
+
 })

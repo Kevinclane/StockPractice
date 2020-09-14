@@ -10,6 +10,7 @@ export class UserInfosController extends BaseController {
     this.router
       .use(auth0provider.getAuthorizedUserInfo)
       .get("/:id", this.getUserInfo)
+      .put("/:id/addstock", this.addStock)
       .put("/:id", this.edit)
   }
   async getUserInfo(req, res, next) {
@@ -26,6 +27,13 @@ export class UserInfosController extends BaseController {
       res.send(req.body);
     } catch (error) {
       next(error);
+    }
+  }
+  async addStock(req, res, next) {
+    try {
+      let update = await userInfosService.addStock(req)
+    } catch (error) {
+      next(error)
     }
   }
 }

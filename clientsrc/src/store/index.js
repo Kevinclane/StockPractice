@@ -2,28 +2,31 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '../router/index'
 import { api, stockApi } from "./AxiosService"
-import StockCandles from "finnhub/dist/model/StockCandles"
+import moment from "moment";
 
 Vue.use(Vuex)
 
-
-const finnhub = require('finnhub');
+const { DateTime } = require("luxon");
+var local = DateTime.local();
+var rezoned = local.setZone("America/New_York");
 const request = require('request');
+let currentDate = rezoned.toFormat("yyyy'-'MM'-'dd")
+let tenYearsAgo = rezoned.minus({ years: 10 }).toFormat("yyyy'-'MM'-'dd")
+let currentUnix = rezoned.toMillis()
+let oneYearAgoUnix = rezoned.minus({ years: 1 }).toMillis()
+const token = "82b5c3ea7a84ec9233d26625eddeabca2ed68484"
 
-const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-api_key.apiKey = "bt5a9vn48v6vdhrudli0" // Replace this
-const finnhubClient = new finnhub.DefaultApi()
 
-// Stock candles
-// finnhubClient.stockCandles("AAPL", "D", 1590988249, 1591852249, {}, (error, data, response) => {
-//   console.log(data)
-// });
+var requestOptions = {
+  'url': `https://api.tiingo.com/tiingo/utilities/search?query=apple&token=82b5c3ea7a84ec9233d26625eddeabca2ed68484`,
+  'headers': {
+    'Content-Type': 'application/xml',
+    'Origin': 'http://localhost:8080/'
+  }
+};
 
-//Quote
-// finnhubClient.quote("AAPL", (error, data, response) => {
-//   console.log(data)
-// });
-const token = "bt5a9vn48v6vdhrudli0"
+
+
 
 export default new Vuex.Store({
   state: {
@@ -31,7 +34,8 @@ export default new Vuex.Store({
     userStockInfo: {},
     mudStockInfo: {},
     publicStocks: [],
-    stocks: []
+    stocks: [],
+    activeStock: {}
   },
   mutations: {
     setUser(state, user) {
@@ -53,22 +57,21 @@ export default new Vuex.Store({
       api.defaults.headers.authorization = "";
     },
     //#endregion
-    async getProfile({ commit }) {
+    async getProfile({ commit, dispatch }) {
       try {
         let res = await api.get("/profile")
         commit("setUser", res.data)
         if (res.data) {
-          let userInfo = await api.get("/userinfo/" + res.data.id)
-          commit("setUserInfo", userInfo.data)
+          dispatch("getUserInfo", res.data.id)
         }
       } catch (err) {
         console.error(err)
       }
     },
-    async StockCandles({ commit }) {
+    async getUserInfo({ commit }, id) {
       try {
-        let res = await finnhubClient.stockCandles("AAPL", "D", 1590988249, 1591852249, {})
-        console.log(res)
+        let userInfo = await api.get("/userinfo/" + id)
+        commit("setUserInfo", userInfo.data)
       } catch (error) {
         console.error(error)
       }
@@ -78,30 +81,30 @@ export default new Vuex.Store({
       let stockNameArr = this.state.stocksFollowing
       let i = 0
       while (i < stockNameArr.length) {
-        request('https://finnhub.io/api/v1/quote?symbol=' + stockNameArr[i] + '&token=' + token, { json: true }, (err, res, body) => {
-          if (err) { return console.log(err); }
-          console.log(body)
-          let stock = {
-            name: stockNameArr[i],
-            currentPrice: body.c,
-            openPrice: body.o,
-            highPrice: body.h,
-            lowPrice: body.l,
-            previousClosePrice: body.pc
-          }
-          commit("addStockInfo", stock)
-          //o = open price of the day
-          //h = high price of the day
-          //l = low price of the day
-          //c = current price
-          //pc = previous close price
-          i++
-        });
+
       }
     },
     async getMyStocks({ commit }) {
+      // @ts-ignore
+      let stockNameArr = this.state.userStockInfo
+      let i = 0
+      while (i < stockNameArr.length) {
 
+      }
+    },
+    async findStock({ commit }, symbol) {
+
+      try {
+        let res = await stockApi.get("daily/" + symbol + "/prices?startDate=2019-01-02&token=" + token + "")
+        console.log(res)
+      } catch (error) {
+        console.error(error)
+      }
+
+
+    },
+    async addMyStock({ commit }, obj) {
+      let res = await api.put("userinfo/" + obj.id + "/add", obj.stock)
     }
-
-  }
+  } //actions closing bracket
 })

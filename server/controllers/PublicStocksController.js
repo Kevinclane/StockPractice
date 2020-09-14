@@ -3,7 +3,7 @@ import BaseController from "../utils/BaseController";
 import auth0provider from "@bcwdev/auth0provider";
 import { publicStocksService } from "../services/publicStocksService";
 
-export class publicStocksController extends BaseController {
+export class PublicStocksController extends BaseController {
 
   constructor() {
     super("api/publicStocks");

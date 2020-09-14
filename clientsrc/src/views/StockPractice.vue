@@ -5,6 +5,11 @@
     </div>
     <div class="container">
       <UserInfo />
+      <div class="row my-2">
+        <div class="col">
+          <router-link class="navbar-brand btn btn-success" :to="{ name: 'stocks' }">Browse Stocks</router-link>
+        </div>
+      </div>
     </div>
   </div>
 </template>

@@ -26,6 +26,9 @@ class UserInfosService {
     userInfo = await createUserInfoIfNeeded(userInfo, user.email)
     return userInfo
   }
+  async addStock(user) {
+    let userInfo = await dbContext.UserInfo.findOneAndUpdate({ ownerEmail: user.userInfo.email }, { $addToSet: { favStocks: user.stock } })
 
+  }
 }
 export const userInfosService = new UserInfosService();
