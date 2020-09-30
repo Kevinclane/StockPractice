@@ -14,14 +14,15 @@ let currentDate = rezoned.toFormat("yyyy'-'MM'-'dd")
 let tenYearsAgo = rezoned.minus({ years: 10 }).toFormat("yyyy'-'MM'-'dd")
 let currentUnix = rezoned.toMillis()
 let oneYearAgoUnix = rezoned.minus({ years: 1 }).toMillis()
-const token = "82b5c3ea7a84ec9233d26625eddeabca2ed68484"
+let token = "ea604de9bf874bdd56121ddfa1dee7f65d1d459e"
 
 
 var requestOptions = {
-  'url': `https://api.tiingo.com/tiingo/utilities/search?query=apple&token=82b5c3ea7a84ec9233d26625eddeabca2ed68484`,
+  'url': `https://api.tiingo.com/tiingo/utilities/search?query=apple&token=ea604de9bf874bdd56121ddfa1dee7f65d1d459e`,
   'headers': {
     'Content-Type': 'application/xml',
-    'Origin': 'http://localhost:8080/'
+    'Origin': 'http://localhost:8080/',
+
   }
 };
 
@@ -35,7 +36,8 @@ export default new Vuex.Store({
     mudStockInfo: {},
     publicStocks: [],
     stocks: [],
-    activeStock: {}
+    activeStock: {},
+    searchedStocks: [],
   },
   mutations: {
     setUser(state, user) {
@@ -95,8 +97,11 @@ export default new Vuex.Store({
     async findStock({ commit }, symbol) {
 
       try {
-        let res = await stockApi.get("daily/" + symbol + "/prices?startDate=2019-01-02&token=" + token + "")
-        console.log(res)
+        // let res = await stockApi.get("utilities/search?query=" + symbol + "&token=" + token)
+
+        debugger
+        let res = await stockApi.get("utilities/search?query=" + symbol, { params: { token: token } })
+        console.log(res.data)
       } catch (error) {
         console.error(error)
       }

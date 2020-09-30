@@ -1,4 +1,5 @@
 import Axios from "axios";
+import token from "./index"
 
 //Allows axios to work locally or live
 let baseUrl = location.host.includes("localhost")
@@ -13,8 +14,8 @@ export const api = Axios.create({
 
 
 export const stockApi = Axios.create({
-  baseURL: "https://api.tiingo.com/tiingo/",
-  timeout: 300000,
+  baseURL: "https://cors-anywhere.herokuapp.com/https://api.tiingo.com/tiingo/",
+  timeout: 300000
   // withCredentials: true,
 
 })
