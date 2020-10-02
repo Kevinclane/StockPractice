@@ -27,8 +27,8 @@ class UserInfosService {
     return userInfo
   }
   async addStock(user) {
-    let userInfo = await dbContext.UserInfo.findOneAndUpdate({ ownerEmail: user.userInfo.email }, { $addToSet: { favStocks: user.stock } })
-
+    let userInfo = await dbContext.UserInfo.findOneAndUpdate({ ownerEmail: user.userInfo.email }, { $addToSet: { favStocks: user.body } })
+    return userInfo
   }
 }
 export const userInfosService = new UserInfosService();

@@ -14,7 +14,7 @@ export const api = Axios.create({
 
 
 export const stockApi = Axios.create({
-  baseURL: "https://cors-anywhere.herokuapp.com/https://api.tiingo.com/tiingo/",
+  baseURL: "https://finnhub.io/api/v1/",
   timeout: 300000
   // withCredentials: true,
 

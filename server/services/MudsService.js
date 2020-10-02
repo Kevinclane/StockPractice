@@ -9,7 +9,7 @@ async function stocksOnly(userInfo) {
 }
 
 class MudsService {
-  async getUserInfo(email) {
+  async getMudStocks(email) {
     let userInfo = await dbContext.UserInfo.findOne({
       ownerEmail: email
     });

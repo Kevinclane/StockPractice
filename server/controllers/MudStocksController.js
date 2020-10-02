@@ -1,18 +1,19 @@
+import express from "express";
 import BaseController from "../utils/BaseController";
 import { mudsService } from "../services/MudsService";
 
-export class MudsController extends BaseController {
+export class MudStocksController extends BaseController {
 
   constructor() {
-    super("api/mud");
+    super("api/mudStocks");
     this.router
-      .get("", this.getUserInfo)
+      .get("/", this.getMudStocks)
   }
-  async getUserInfo(req, res, next) {
+  async getMudStocks(req, res, next) {
+    let mudEmail = "kevinclane21@gmail.com"
     try {
-      let mudEmail = "kevinclane21@gmail.com"
-      let data = await mudsService.getUserInfo(mudEmail);
-      res.send(data);
+      let stocks = await mudsService.getMudStocks(mudEmail);
+      res.send(stocks);
     } catch (error) {
       next(error);
     }

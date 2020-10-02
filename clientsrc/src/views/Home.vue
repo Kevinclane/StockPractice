@@ -10,10 +10,12 @@
       <div class="row">
         <Stocks v-for="stock in stocks" :key="stock.name" :stock="stock" />
       </div>
-      <div class="col-12">
-        <button @click="toggleStockForm">Add Stock</button>
+      <div class="row">
+        <div class="col-12">
+          <button @click="toggleStockForm">Add Stock</button>
+        </div>
       </div>
-      <div v-if="addStockForm == true" class="container-fluid my-2">
+      <div v-if="addStockForm == true" class="my-2">
         <div class="row">
           <div class="col">
             <form @submit.prevent="addMyStock">
@@ -30,13 +32,6 @@
                 name="shares"
                 id="shares"
                 placeholder="shares"
-              />
-              <input
-                v-model="newStock.boughtAt"
-                type="number"
-                name="shares"
-                id="share"
-                placeholder="price bought at"
               />
               <button type="submit">ADD</button>
               <button @click="toggleStockForm">Cancel</button>
@@ -60,7 +55,9 @@ export default {
       newStock: {},
     };
   },
-  mounted() {},
+  mounted() {
+    this.$store.dispatch("getMudStocks");
+  },
   computed: {
     stocks() {
       return this.$store.state.stocks;
@@ -75,7 +72,7 @@ export default {
         stock: this.newStock,
         id: this.user.id,
       };
-      this.$store.dispatch("addMyStock", this.obj);
+      this.$store.dispatch("addMyStock", obj);
       this.newStock = {};
     },
     toggleStockForm() {

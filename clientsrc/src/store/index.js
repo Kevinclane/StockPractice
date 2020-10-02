@@ -14,18 +14,7 @@ let currentDate = rezoned.toFormat("yyyy'-'MM'-'dd")
 let tenYearsAgo = rezoned.minus({ years: 10 }).toFormat("yyyy'-'MM'-'dd")
 let currentUnix = rezoned.toMillis()
 let oneYearAgoUnix = rezoned.minus({ years: 1 }).toMillis()
-let token = "ea604de9bf874bdd56121ddfa1dee7f65d1d459e"
-
-
-var requestOptions = {
-  'url': `https://api.tiingo.com/tiingo/utilities/search?query=apple&token=ea604de9bf874bdd56121ddfa1dee7f65d1d459e`,
-  'headers': {
-    'Content-Type': 'application/xml',
-    'Origin': 'http://localhost:8080/',
-
-  }
-};
-
+let token = "bt5a9vn48v6vdhrudli0"
 
 
 
@@ -48,6 +37,9 @@ export default new Vuex.Store({
     },
     setUserInfo(state, data) {
       state.userStockInfo = data
+    },
+    setStocks(state, stocks) {
+      state.stocks = stocks
     }
   },
   actions: {
@@ -86,30 +78,40 @@ export default new Vuex.Store({
 
       }
     },
-    async getMyStocks({ commit }) {
-      // @ts-ignore
-      let stockNameArr = this.state.userStockInfo
-      let i = 0
-      while (i < stockNameArr.length) {
-
+    async getMudStocks({ commit, dispatch }) {
+      try {
+        let res = await api.get("/mudStocks")
+        let stocks = []
+        let i = 0
+        while (i < res.data.favStocks.length) {
+          let stock = await dispatch("getMudStockData", res.data.favStocks)
+          stocks.push(stock)
+          i++
+        }
+        commit("setStocks", stocks)
+      } catch (error) {
+        console.error(error)
       }
     },
-    async findStock({ commit }, symbol) {
-
+    async getMudStockData({ commit }, symbolObjs) {
+      let symbol = symbolObjs.symbol
+      let res = await stockApi.get("quote?symbol=" + symbol + "&token=" + token)
+      return res.data
+    },
+    async getMyStocks({ commit },) {
+    },
+    async findStock({ commit, dispatch }, searchData) {
       try {
-        // let res = await stockApi.get("utilities/search?query=" + symbol + "&token=" + token)
-
+        let res = await stockApi.get("quote?", { params: { symbol: searchData, token: token } })
         debugger
-        let res = await stockApi.get("utilities/search?query=" + symbol, { params: { token: token } })
         console.log(res.data)
       } catch (error) {
         console.error(error)
       }
-
-
     },
     async addMyStock({ commit }, obj) {
-      let res = await api.put("userinfo/" + obj.id + "/add", obj.stock)
+      let res = await api.put("userinfo/" + obj.id + "/addstock", obj.stock)
+      console.log(res.data)
     }
   } //actions closing bracket
 })

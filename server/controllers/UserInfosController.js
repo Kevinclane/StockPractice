@@ -32,6 +32,7 @@ export class UserInfosController extends BaseController {
   async addStock(req, res, next) {
     try {
       let update = await userInfosService.addStock(req)
+      res.send(update)
     } catch (error) {
       next(error)
     }
